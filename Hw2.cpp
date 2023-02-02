@@ -1,17 +1,18 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
 /*
 TODO
-GCD function
 Large modulo calculator
 Parse encrypted message
 decrypt each message
 Print out message
 Word bank
+
 */
 
 /* Values
@@ -25,6 +26,8 @@ bool isPrime(int p);
 int findDivisor(int n);
 int eulersTotient(int p, int q);
 int invMod(int e, int totient);
+int GCD(int a, int b);
+int moduloCalculator(int base, int exp, int mod);
 
 int main(){
     int e, n, m, p, q, totient, d;
@@ -55,6 +58,8 @@ int main(){
     cout << "totient: " << totient << endl;
     d = invMod(e, totient);
     cout << "d: " << d << endl;
+    cout << "Gcd: " << GCD(8, 7) << endl;
+    cout << "5^99 mod 23: " << moduloCalculator(5, 99, 23);
     return 0;
 }
 
@@ -95,4 +100,32 @@ int invMod(int e, int totient){
         }
     }
     return res;
+}
+
+int GCD(int a, int b){
+    int r = a % b;
+    while(r){
+        a = b;
+        b = r;
+        r = a % b;
+    }
+    return b;
+}
+
+int moduloCalculator(int base, int exp, int mod) {
+    vector<int> storage;
+    int product = 1;
+    while (exp != 0){
+        if(exp % 2 == 1){
+            exp -= 1;
+            storage.push_back(base);
+        }
+        exp /= 2;
+        base *= base;
+        base = base % mod;
+    }
+    for (int i : storage){
+        product *= i;
+    }
+    return product % mod;
 }
