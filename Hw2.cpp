@@ -2,17 +2,13 @@
 #include <string>
 #include <cmath>
 #include <vector>
+#include <sstream>
+#include <map>
 
 using namespace std;
 
 /*
 TODO
-Large modulo calculator
-Parse encrypted message
-decrypt each message
-Print out message
-Word bank
-
 */
 
 /* Values
@@ -28,38 +24,61 @@ int eulersTotient(int p, int q);
 int invMod(int e, int totient);
 int GCD(int a, int b);
 int moduloCalculator(int base, int exp, int mod);
+vector<int> parseMessage(string m);
 
 int main(){
     int e, n, m, p, q, totient, d;
     string message, temp;
+    vector<int> encrypted, decrypted;
+    map<int, char> dict = {{7, 'A'}, {8, 'B'}, {9, 'C'}, {10, 'D'},
+                            {11, 'E'},{12, 'F'}, {13, 'G'}, {14, 'H'},
+                            {15, 'I'}, {16, 'J'}, {17, 'K'},{18, 'L'},
+                            {19, 'M'}, {20, 'N'},{21, 'O'}, {22, 'P'},
+                            {23, 'Q'}, {24, 'R'}, {25, 'S'}, {26, 'T'},
+                            {27, 'U'}, {28, 'V'},{29, 'W'},{30, 'X'},
+                            {31, 'Y'}, {32, 'Z'}, {33, ' '},
+                            {34, '"'}, {35, ','}, {36, '.'}, {37, '\''}
+                            };
 
-    cout << "Enter a value for e: ";
-    getline(cin, temp);
-    e = stoi(temp);
+    e = 7;
+    n = 4453;
 
-    cout << "Enter a value for n: ";
-    getline(cin, temp);
-    n = stoi(temp);
+    // cout << "Enter a value for e: ";
+    // getline(cin, temp);
+    // e = stoi(temp);
 
-    cout << "Enter a value for m : ";
-    getline(cin, temp);
-    m = stoi(temp);
+    // cout << "Enter a value for n: ";
+    // getline(cin, temp);
+    // n = stoi(temp);
+
+    // cout << "Enter a value for m : ";
+    // getline(cin, temp);
+    // m = stoi(temp);
 
     cout << "Enter the message: ";
     getline(cin, message);
-    //cout << e << n << m;
-    //cout << isPrime(71);
-    //cout << findDivisor(n);
+    // //cout << e << n << m;
+    // //cout << isPrime(71);
+    // //cout << findDivisor(n);
     p = findDivisor(n);
-    cout << "p: " << p << endl;
+    // cout << "p: " << p << endl;
     q = n / p;
-    cout << "q: " << q << endl;
+    // cout << "q: " << q << endl;
     totient = eulersTotient(p, q);
-    cout << "totient: " << totient << endl;
+    // cout << "totient: " << totient << endl;
     d = invMod(e, totient);
-    cout << "d: " << d << endl;
-    cout << "Gcd: " << GCD(8, 7) << endl;
-    cout << "5^99 mod 23: " << moduloCalculator(5, 99, 23);
+    // cout << "d: " << d << endl;
+    // cout << ": " << moduloCalculator(4191, d, n); 
+    encrypted = parseMessage(message);
+    for (int i : encrypted){
+        decrypted.push_back(moduloCalculator(i, d, n));
+    }
+    // for (int i = 0; i < encrypted.size(); i++){
+    //     cout << i << " " << encrypted.at(i) << endl;
+    // }
+    for (int i = 0; i < decrypted.size(); i++){
+        cout << dict[decrypted.at(i)];
+    }
     return 0;
 }
 
@@ -113,19 +132,36 @@ int GCD(int a, int b){
 }
 
 int moduloCalculator(int base, int exp, int mod) {
-    vector<int> storage;
     int product = 1;
-    while (exp != 0){
-        if(exp % 2 == 1){
-            exp -= 1;
-            storage.push_back(base);
+    while (exp >= 1){
+        while((base < mod && base != 1)){
+            if(exp % 2 == 1){
+                exp -= 1;
+                product *= base;
+                product %= mod;
+            }
+            exp /= 2;
+            base *= base;
         }
-        exp /= 2;
-        base *= base;
+        if(base == 1 || base == 0){
+            break;
+        }
         base = base % mod;
     }
-    for (int i : storage){
-        product *= i;
-    }
     return product % mod;
+}
+
+vector<int> parseMessage(string m) {
+    char delim = ' ';
+    vector<int> words;
+
+    stringstream sstream(m);
+    string word;
+    while (getline(sstream, word, delim)) {
+        int encrypted = stoi(word);
+        words.push_back(encrypted);
+    }
+
+    return words;
+    
 }
