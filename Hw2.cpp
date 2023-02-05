@@ -27,8 +27,8 @@ int moduloCalculator(int base, int exp, int mod);
 vector<int> parseMessage(string m);
 
 int main(){
-    int e, n, m, p, q, totient, d;
-    string message, temp;
+    int e = 0, n = 0, m = 0, p = 0, q = 0, totient = 0, d = 0, temp1 = 0;
+    string message = "", temp = "";
     vector<int> encrypted, decrypted;
     map<int, char> dict = {{7, 'A'}, {8, 'B'}, {9, 'C'}, {10, 'D'},
                             {11, 'E'},{12, 'F'}, {13, 'G'}, {14, 'H'},
@@ -46,36 +46,42 @@ int main(){
     // cout << "Enter a value for e: ";
     // getline(cin, temp);
     // e = stoi(temp);
+    cin >> e;
 
     // cout << "Enter a value for n: ";
     // getline(cin, temp);
     // n = stoi(temp);
-
+    cin >> n;
+    
     // cout << "Enter a value for m : ";
     // getline(cin, temp);
     // m = stoi(temp);
+    cin >> m;
 
-    cout << "Enter the message: ";
-    getline(cin, message);
-    // //cout << e << n << m;
-    // //cout << isPrime(71);
-    // //cout << findDivisor(n);
+    // cout << "Enter the message: ";
+    // getline(cin, message);
+    for(int i = 0; i < m; i++){
+        // cin.ignore(1000, '\n');
+        cin >> temp1;
+        encrypted.push_back(temp1);
+        // cout << encrypted.at(i) << endl;
+    }
     p = findDivisor(n);
-    // cout << "p: " << p << endl;
     q = n / p;
-    // cout << "q: " << q << endl;
     totient = eulersTotient(p, q);
-    // cout << "totient: " << totient << endl;
     d = invMod(e, totient);
-    // cout << "d: " << d << endl;
-    // cout << ": " << moduloCalculator(4191, d, n); 
-    encrypted = parseMessage(message);
+    if(GCD(e, totient) != 1){
+        cout << "Public key is not valid!";
+        return 0;
+    }
+    cout << p << " " << q << " " << totient << " " << d << endl;
     for (int i : encrypted){
         decrypted.push_back(moduloCalculator(i, d, n));
     }
-    // for (int i = 0; i < encrypted.size(); i++){
-    //     cout << i << " " << encrypted.at(i) << endl;
-    // }
+    for(int i : decrypted){
+        cout << i << " ";
+    }
+    cout << endl;
     for (int i = 0; i < decrypted.size(); i++){
         cout << dict[decrypted.at(i)];
     }
@@ -122,6 +128,11 @@ int invMod(int e, int totient){
 }
 
 int GCD(int a, int b){
+    if (b < a){
+        int temp = a;
+        a = b;
+        b = temp;
+    }
     int r = a % b;
     while(r){
         a = b;
