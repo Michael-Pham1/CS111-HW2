@@ -7,10 +7,6 @@
 
 using namespace std;
 
-/*
-TODO
-*/
-
 /* Values
 p,q = 61, 73
 e = 7
@@ -24,9 +20,6 @@ int eulersTotient(int p, int q);
 int invMod(int e, int totient);
 int GCD(int a, int b);
 int moduloCalculator(int base, int exp, int mod);
-vector<int> parseMessage(string m);
-int gcdExtended(int a, int b, int *x, int *y);
-int modInverse(int A, int M);
 
 
 int minv(int a, int b);
@@ -57,10 +50,8 @@ int main(){
     p = findDivisor(n);
     q = n / p;
     totient = eulersTotient(p, q);
-    d = modInverse(e, totient);
-    // invMod1 = modInverse(e, totient);
-    // cout << invMod1 << endl;
-    if(GCD(e, totient) !=  1 || e >= n || !isPrime(p) || !isPrime(q)){
+    d = invMod(e, totient);
+    if(GCD(e, totient) !=  1 || e >= n || !isPrime(p) || !isPrime(q) || p == q){
         cout << "Public key is not valid!";
         return 0;
     }
@@ -118,16 +109,6 @@ int invMod(int e, int totient){
     return res;
 }
 
-int minv(int e, int totient) {
-    int d = 0;
-    for (int i = 1; i < 10000; i++) {
-        if (i*(GCD(e, totient)) == 1) {
-            d = i;
-            break;
-        }
-    }
-    return d;
-}
 
 int GCD(int a, int b){
     if (b < a){
@@ -164,43 +145,3 @@ int moduloCalculator(int base, int exp, int mod) {
     return product % mod;
 }
 
-vector<int> parseMessage(string m) {
-    char delim = ' ';
-    vector<int> words;
-
-    stringstream sstream(m);
-    string word;
-    while (getline(sstream, word, delim)) {
-        int encrypted = stoi(word);
-        words.push_back(encrypted);
-    }
-    return words;
-}
-
-int gcdExtended(int a, int b, int *x, int *y)
-{
-    // Base Case
-    if (a == 0)
-    {
-        *x = 0;
-        *y = 1;
-        return b;
-    }
- 
-    int x1, y1; // To store results of recursive call
-    int gcd = gcdExtended(b%a, a, &x1, &y1);
- 
-    // Update x and y using results of
-    // recursive call
-    *x = y1 - (b/a) * x1;
-    *y = x1;
- 
-    return gcd;
-}
-int modInverse(int A, int M)
-{
-    int x = 0, y;
-    int g = gcdExtended(A, M, &x, &y);
-    int res = (x % M + M) % M;
-    return res;
-}
