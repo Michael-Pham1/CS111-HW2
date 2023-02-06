@@ -70,7 +70,7 @@ int main(){
     q = n / p;
     totient = eulersTotient(p, q);
     d = invMod(e, totient);
-    if(GCD(e, totient) != 1){
+    if(GCD(e, totient) != 1 || e >= n || e < 1){
         cout << "Public key is not valid!";
         return 0;
     }
@@ -116,7 +116,7 @@ int eulersTotient(int p, int q){
 
 int invMod(int e, int totient){
     int res = 0;
-    for (int i = 1; i < 1000; i++) {
+    for (int i = 1; i < 100000; i++) {
         for (int j = 1; j < totient; j++) {
             if (totient * i == (e * j) - 1) {
                 res = j;
