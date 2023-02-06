@@ -25,9 +25,14 @@ int invMod(int e, int totient);
 int GCD(int a, int b);
 int moduloCalculator(int base, int exp, int mod);
 vector<int> parseMessage(string m);
+int gcdExtended(int a, int b, int *x, int *y);
+int modInverse(int A, int M);
+
+
+int minv(int a, int b);
 
 int main(){
-    int e = 0, n = 0, m = 0, p = 0, q = 0, totient = 0, d = 0, temp1 = 0;
+    int e = 0, n = 0, m = 0, p = 0, q = 0, totient = 0, d = 0, temp1 = 0, invMod1 = 0;
     string message = "", temp = "";
     vector<int> encrypted, decrypted;
     map<int, char> dict = {{7, 'A'}, {8, 'B'}, {9, 'C'}, {10, 'D'},
@@ -42,35 +47,20 @@ int main(){
 
     e = 7;
     n = 4453;
-
-    // cout << "Enter a value for e: ";
-    // getline(cin, temp);
-    // e = stoi(temp);
     cin >> e;
-
-    // cout << "Enter a value for n: ";
-    // getline(cin, temp);
-    // n = stoi(temp);
     cin >> n;
-    
-    // cout << "Enter a value for m : ";
-    // getline(cin, temp);
-    // m = stoi(temp);
     cin >> m;
-
-    // cout << "Enter the message: ";
-    // getline(cin, message);
     for(int i = 0; i < m; i++){
-        // cin.ignore(1000, '\n');
         cin >> temp1;
         encrypted.push_back(temp1);
-        // cout << encrypted.at(i) << endl;
     }
     p = findDivisor(n);
     q = n / p;
     totient = eulersTotient(p, q);
-    d = invMod(e, totient);
-    if(GCD(e, totient) != 1 || e >= n || e < 1){
+    d = modInverse(e, totient);
+    // invMod1 = modInverse(e, totient);
+    // cout << invMod1 << endl;
+    if(GCD(e, totient) !=  1 || e >= n || !isPrime(p) || !isPrime(q)){
         cout << "Public key is not valid!";
         return 0;
     }
@@ -110,14 +100,15 @@ int findDivisor(int n){
     return -1;
 }
 
+ 
 int eulersTotient(int p, int q){
     return((p-1) * (q-1)); 
 }
 
 int invMod(int e, int totient){
     int res = 0;
-    for (int i = 1; i < 100000; i++) {
-        for (int j = 1; j < totient; j++) {
+    for (int i = 0; i < 10000; i++) {
+        for (int j = 1; j < totient; j++) { 
             if (totient * i == (e * j) - 1) {
                 res = j;
                 break;
@@ -125,6 +116,17 @@ int invMod(int e, int totient){
         }
     }
     return res;
+}
+
+int minv(int e, int totient) {
+    int d = 0;
+    for (int i = 1; i < 10000; i++) {
+        if (i*(GCD(e, totient)) == 1) {
+            d = i;
+            break;
+        }
+    }
+    return d;
 }
 
 int GCD(int a, int b){
@@ -172,7 +174,33 @@ vector<int> parseMessage(string m) {
         int encrypted = stoi(word);
         words.push_back(encrypted);
     }
-
     return words;
-    
+}
+
+int gcdExtended(int a, int b, int *x, int *y)
+{
+    // Base Case
+    if (a == 0)
+    {
+        *x = 0;
+        *y = 1;
+        return b;
+    }
+ 
+    int x1, y1; // To store results of recursive call
+    int gcd = gcdExtended(b%a, a, &x1, &y1);
+ 
+    // Update x and y using results of
+    // recursive call
+    *x = y1 - (b/a) * x1;
+    *y = x1;
+ 
+    return gcd;
+}
+int modInverse(int A, int M)
+{
+    int x = 0, y;
+    int g = gcdExtended(A, M, &x, &y);
+    int res = (x % M + M) % M;
+    return res;
 }
